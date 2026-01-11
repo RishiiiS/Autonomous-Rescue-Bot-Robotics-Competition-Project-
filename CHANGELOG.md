@@ -5,3 +5,4 @@
 - Optimize control loops (2026-02-27T12:00:00+0530)
 - Enhance sensor parsing (2026-03-06T12:00:00+0530)
 - Add comments (2026-03-20T12:00:00+0530)
+- Fix memory leak in motor control (2026-01-11T14:00:00+0530)
