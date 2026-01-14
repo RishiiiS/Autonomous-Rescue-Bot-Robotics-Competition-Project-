@@ -8,3 +8,4 @@
 - Fix memory leak in motor control (2026-01-11T14:00:00+0530)
 - Update calibration parameters (2026-01-12T14:00:00+0530)
 - Refactor state machine (2026-01-13T14:00:00+0530)
+- Add fail-safe checks (2026-01-14T14:00:00+0530)
