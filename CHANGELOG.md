@@ -13,3 +13,4 @@
 - Improve sensor reading speed (2026-01-16T14:00:00+0530)
 - Tune PID loop (2026-01-17T14:00:00+0530)
 - Fix compilation warnings (2026-01-18T14:00:00+0530)
+- Update deployment guide (2026-01-19T14:00:00+0530)
