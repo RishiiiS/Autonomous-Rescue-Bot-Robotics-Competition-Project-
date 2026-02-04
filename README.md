@@ -1,4 +1,4 @@
-Autonomous Rescue Bot
+#Autonomous Rescue Bot
 A robotics competition project focused on building a four-wheel rescue robot capable of operating in danger-prone environments and retrieving hostages/objects using a gripper mechanism. The system combines ESP32-based motion control with Raspberry Pi camera streaming for real-time visual monitoring.
 
 Project Overview
