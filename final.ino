@@ -1,0 +1,217 @@
+#include <BluetoothSerial.h>
+
+BluetoothSerial SerialBT;
+
+
+#define MOTOR_FREQ 20000
+#define SERVO_FREQ 50
+
+#define RPWM1  5
+#define LPWM1  4
+#define R_EN1  14
+#define L_EN1  12
+
+#define RPWM2  19
+#define LPWM2  18
+#define R_EN2  21
+#define L_EN2  22
+
+
+#define RPWM3  13  
+#define LPWM3  27   
+#define R_EN3  25
+#define L_EN3  26
+
+#define SERVO_PIN 32  // ✅ was 27
+
+int speedValue = 150;
+int diff = 4;
+
+int servoAngle = 90;
+bool servoUpRun = false;
+bool servoDownRun = false;
+
+char currentDriveCmd = 'S';
+int extraMotorDrive = 0;
+void setExtraMotor(int speed);
+
+unsigned long lastServoMove = 0;
+const int servoInterval = 20;
+
+/* ================= SETUP ================= */
+void setup() {
+  Serial.begin(115200);
+  SerialBT.begin("ESP32_Car");
+
+  pinMode(R_EN1, OUTPUT); pinMode(L_EN1, OUTPUT);
+  pinMode(R_EN2, OUTPUT); pinMode(L_EN2, OUTPUT);
+  pinMode(R_EN3, OUTPUT); pinMode(L_EN3, OUTPUT);
+
+  digitalWrite(R_EN1, HIGH); digitalWrite(L_EN1, HIGH);
+  digitalWrite(R_EN2, HIGH); digitalWrite(L_EN2, HIGH);
+  digitalWrite(R_EN3, HIGH); digitalWrite(L_EN3, HIGH);
+
+  ledcAttach(RPWM1, MOTOR_FREQ, 8);
+  ledcAttach(LPWM1, MOTOR_FREQ, 8);
+  ledcAttach(RPWM2, MOTOR_FREQ, 8);
+  ledcAttach(LPWM2, MOTOR_FREQ, 8);
+  ledcAttach(RPWM3, MOTOR_FREQ, 8);
+  ledcAttach(LPWM3, MOTOR_FREQ, 8);
+
+  ledcAttach(SERVO_PIN, SERVO_FREQ, 16);
+  setServoAngle(servoAngle);
+
+  Serial.println("ESP32 READY ✅");
+}
+
+/* ================= LOOP ================= */
+void loop() {
+
+  if (SerialBT.hasClient() && SerialBT.available()) {
+    char cmd = SerialBT.read();
+    Serial.println(cmd);   
+
+    if (cmd >= '0' && cmd <= '9') {
+      speedValue = map(cmd - '0', 0, 9, 60, 255);
+      controlCar(currentDriveCmd); // Instantly update active movements
+      if (extraMotorDrive != 0) {
+        setExtraMotor(extraMotorDrive * speedValue); // Instantly update extra motor
+      }
+    } else {
+      controlCar(cmd);
+    }
+  }
+
+  /* ===== CONTINUOUS SERVO ===== */
+  if (servoUpRun || servoDownRun) {
+    unsigned long now = millis();
+    if (now - lastServoMove >= servoInterval) {
+      lastServoMove = now;
+
+      if (servoUpRun) {
+        setServoAngle(servoAngle + 1);
+      } else if (servoDownRun) {
+        setServoAngle(servoAngle - 1);
+      }
+    }
+  }
+}
+
+/* ================= COMMAND HANDLER ================= */
+void controlCar(char c) {
+  switch (c) {
+
+    /* ---- NEW DC MOTOR ---- */
+    case 'W':   // LEFT
+      extraMotorDrive = -1;
+      newMotorLeft();
+      break;
+
+    case 'U':   // RIGHT
+      extraMotorDrive = 1;
+      newMotorRight();
+      break;
+
+    case 'w':
+    case 'u':   // STOP
+      extraMotorDrive = 0;
+      stopNewMotor();
+      break;
+
+    /* ---- SERVO ---- */
+    case 'V':
+      servoUpRun = true;
+      servoDownRun = false;
+      break;
+
+    case 'v':
+      servoUpRun = false;
+      break;
+
+    case 'X':
+      servoDownRun = true;
+      servoUpRun = false;
+      break;
+
+    case 'x':
+      servoDownRun = false;
+      break;
+
+    /* ---- CAR ---- */
+    case 'F': currentDriveCmd = 'F'; moveForward(); break;
+    case 'B': currentDriveCmd = 'B'; moveBackward(); break;
+    case 'L': currentDriveCmd = 'L'; turnLeft(); break;
+    case 'R': currentDriveCmd = 'R'; turnRight(); break;
+    case 'S': currentDriveCmd = 'S'; stopAll(); break;
+
+    case 'G': currentDriveCmd = 'G'; moveLeftForward(); break;
+    case 'I': currentDriveCmd = 'I'; moveRightForward(); break;
+    case 'H': currentDriveCmd = 'H'; moveLeftBackward(); break;
+    case 'J': currentDriveCmd = 'J'; moveRightBackward(); break;
+  }
+}
+
+/* ================= SERVO ================= */
+void setServoAngle(int angle) {
+  servoAngle = constrain(angle, 0, 180);
+  uint32_t duty = map(servoAngle, 0, 180, 1638, 8192);
+  ledcWrite(SERVO_PIN, duty);
+}
+
+/* ================= MOTOR HELPERS ================= */
+void setDriveMotors(int m1Speed, int m2Speed) {
+  if (m1Speed >= 0) {
+    ledcWrite(RPWM1, m1Speed);
+    ledcWrite(LPWM1, 0);
+  } else {
+    ledcWrite(RPWM1, 0);
+    ledcWrite(LPWM1, -m1Speed);
+  }
+
+  if (m2Speed >= 0) {
+    ledcWrite(RPWM2, m2Speed);
+    ledcWrite(LPWM2, 0);
+  } else {
+    ledcWrite(RPWM2, 0);
+    ledcWrite(LPWM2, -m2Speed);
+  }
+}
+
+void setExtraMotor(int speed) {
+  if (speed >= 0) {
+    ledcWrite(RPWM3, speed);
+    ledcWrite(LPWM3, 0);
+  } else {
+    ledcWrite(RPWM3, 0);
+    ledcWrite(LPWM3, -speed);
+  }
+}
+
+/* ================= EXTRA MOTOR ================= */
+void newMotorLeft() {
+  setExtraMotor(-speedValue);
+}
+
+void newMotorRight() {
+  setExtraMotor(speedValue);
+}
+
+void stopNewMotor() {
+  setExtraMotor(0);
+}
+
+/* ================= CAR MOVEMENT ================= */
+void moveForward()       { setDriveMotors(speedValue, speedValue); }
+void moveBackward()      { setDriveMotors(-speedValue, -speedValue); }
+void turnLeft()          { setDriveMotors(speedValue, -speedValue); }
+void turnRight()         { setDriveMotors(-speedValue, speedValue); }
+void moveLeftForward()   { setDriveMotors(speedValue, speedValue / diff); }
+void moveRightForward()  { setDriveMotors(speedValue / diff, speedValue); }
+void moveLeftBackward()  { setDriveMotors(-speedValue, -speedValue / diff); }
+void moveRightBackward() { setDriveMotors(-speedValue / diff, -speedValue); }
+
+void stopAll() {
+  setDriveMotors(0, 0);
+  extraMotorDrive = 0;
+  stopNewMotor();
+}

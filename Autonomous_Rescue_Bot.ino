@@ -33,6 +33,8 @@ bool servoDownRun = false;
 
 bool newMotorLeftRun  = false;
 bool newMotorRightRun = false;
+char currentDriveCmd = 'S';
+int extraMotorDrive = 0;
 
 unsigned long lastServoMove = 0;
 const int servoInterval = 20;
