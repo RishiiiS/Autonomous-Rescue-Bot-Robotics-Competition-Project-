@@ -166,6 +166,17 @@ void setServoAngle(int angle) {
   ledcWrite(SERVO_PIN, duty);
 }
 
+/* ================= MOTOR HELPERS ================= */
+void setExtraMotor(int speed) {
+  if (speed >= 0) {
+    ledcWrite(RPWM3, speed);
+    ledcWrite(LPWM3, 0);
+  } else {
+    ledcWrite(RPWM3, 0);
+    ledcWrite(LPWM3, -speed);
+  }
+}
+
 /* ================= EXTRA MOTOR ================= */
 void newMotorLeft() {
   ledcWrite(RPWM3, 0);
