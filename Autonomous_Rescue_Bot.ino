@@ -197,13 +197,11 @@ void setDriveMotors(int m1Speed, int m2Speed) {
 
 /* ================= EXTRA MOTOR ================= */
 void newMotorLeft() {
-  ledcWrite(RPWM3, 0);
-  ledcWrite(LPWM3, speedValue);
+  setExtraMotor(-speedValue);
 }
 
 void newMotorRight() {
-  ledcWrite(RPWM3, speedValue);
-  ledcWrite(LPWM3, 0);
+  setExtraMotor(speedValue);
 }
 
 void stopNewMotor() {
