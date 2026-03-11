@@ -177,6 +177,24 @@ void setExtraMotor(int speed) {
   }
 }
 
+void setDriveMotors(int m1Speed, int m2Speed) {
+  if (m1Speed >= 0) {
+    ledcWrite(RPWM1, m1Speed);
+    ledcWrite(LPWM1, 0);
+  } else {
+    ledcWrite(RPWM1, 0);
+    ledcWrite(LPWM1, -m1Speed);
+  }
+
+  if (m2Speed >= 0) {
+    ledcWrite(RPWM2, m2Speed);
+    ledcWrite(LPWM2, 0);
+  } else {
+    ledcWrite(RPWM2, 0);
+    ledcWrite(LPWM2, -m2Speed);
+  }
+}
+
 /* ================= EXTRA MOTOR ================= */
 void newMotorLeft() {
   ledcWrite(RPWM3, 0);
