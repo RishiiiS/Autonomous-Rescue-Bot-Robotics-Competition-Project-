@@ -205,8 +205,7 @@ void newMotorRight() {
 }
 
 void stopNewMotor() {
-  ledcWrite(RPWM3, 0);
-  ledcWrite(LPWM3, 0);
+  setExtraMotor(0);
 }
 
 /* ================= CAR MOVEMENT ================= */
