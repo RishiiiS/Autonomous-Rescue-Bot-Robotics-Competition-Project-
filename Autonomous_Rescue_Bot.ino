@@ -211,12 +211,7 @@ void stopNewMotor() {
 /* ================= CAR MOVEMENT ================= */
 void moveForward()       { setDriveMotors(speedValue, speedValue); }
 
-void moveBackward() {
-  ledcWrite(RPWM1, 0);
-  ledcWrite(LPWM1, speedValue);
-  ledcWrite(RPWM2, 0);
-  ledcWrite(LPWM2, speedValue);
-}
+void moveBackward()      { setDriveMotors(-speedValue, -speedValue); }
 
 void turnLeft() {
   ledcWrite(RPWM1, speedValue);
