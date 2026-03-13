@@ -213,19 +213,9 @@ void moveForward()       { setDriveMotors(speedValue, speedValue); }
 
 void moveBackward()      { setDriveMotors(-speedValue, -speedValue); }
 
-void turnLeft() {
-  ledcWrite(RPWM1, speedValue);
-  ledcWrite(LPWM1, 0);
-  ledcWrite(RPWM2, 0);
-  ledcWrite(LPWM2, speedValue);
-}
+void turnLeft()          { setDriveMotors(speedValue, -speedValue); }
 
-void turnRight() {
-  ledcWrite(RPWM1, 0);
-  ledcWrite(LPWM1, speedValue);
-  ledcWrite(RPWM2, speedValue);
-  ledcWrite(LPWM2, 0);
-}
+void turnRight()         { setDriveMotors(-speedValue, speedValue); }
 
 void moveLeftForward() {
   ledcWrite(RPWM1, speedValue);
