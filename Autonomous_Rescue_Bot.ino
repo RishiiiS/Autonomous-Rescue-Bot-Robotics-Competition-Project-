@@ -226,9 +226,7 @@ void moveLeftBackward()  { setDriveMotors(-speedValue, -speedValue / diff); }
 void moveRightBackward() { setDriveMotors(-speedValue / diff, -speedValue); }
 
 void stopAll() {
-  ledcWrite(RPWM1, 0);
-  ledcWrite(LPWM1, 0);
-  ledcWrite(RPWM2, 0);
-  ledcWrite(LPWM2, 0);
+  setDriveMotors(0, 0);
+  extraMotorDrive = 0;
   stopNewMotor();
 }
