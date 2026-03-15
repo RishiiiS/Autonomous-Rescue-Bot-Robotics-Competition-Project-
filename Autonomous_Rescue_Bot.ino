@@ -146,16 +146,16 @@ void controlCar(char c) {
       break;
 
     /* ---- CAR ---- */
-    case 'F': moveForward(); break;
-    case 'B': moveBackward(); break;
-    case 'L': turnLeft(); break;
-    case 'R': turnRight(); break;
-    case 'S': stopAll(); break;
+    case 'F': currentDriveCmd = 'F'; moveForward(); break;
+    case 'B': currentDriveCmd = 'B'; moveBackward(); break;
+    case 'L': currentDriveCmd = 'L'; turnLeft(); break;
+    case 'R': currentDriveCmd = 'R'; turnRight(); break;
+    case 'S': currentDriveCmd = 'S'; stopAll(); break;
 
-    case 'G': moveLeftForward(); break;
-    case 'I': moveRightForward(); break;
-    case 'H': moveLeftBackward(); break;
-    case 'J': moveRightBackward(); break;
+    case 'G': currentDriveCmd = 'G'; moveLeftForward(); break;
+    case 'I': currentDriveCmd = 'I'; moveRightForward(); break;
+    case 'H': currentDriveCmd = 'H'; moveLeftBackward(); break;
+    case 'J': currentDriveCmd = 'J'; moveRightBackward(); break;
   }
 }
 
