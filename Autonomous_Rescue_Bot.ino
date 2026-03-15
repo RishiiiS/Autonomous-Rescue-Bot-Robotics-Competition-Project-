@@ -88,18 +88,16 @@ void loop() {
   }
 
   /* ===== CONTINUOUS SERVO ===== */
-  unsigned long now = millis();
-  if (now - lastServoMove >= servoInterval) {
-    lastServoMove = now;
+  if (servoUpRun || servoDownRun) {
+    unsigned long now = millis();
+    if (now - lastServoMove >= servoInterval) {
+      lastServoMove = now;
 
-    if (servoUpRun) {
-      servoAngle++;
-      setServoAngle(servoAngle);
-    }
-
-    if (servoDownRun) {
-      servoAngle--;
-      setServoAngle(servoAngle);
+      if (servoUpRun) {
+        setServoAngle(servoAngle + 1);
+      } else if (servoDownRun) {
+        setServoAngle(servoAngle - 1);
+      }
     }
   }
 }
