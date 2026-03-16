@@ -159,16 +159,6 @@ void setServoAngle(int angle) {
 }
 
 /* ================= MOTOR HELPERS ================= */
-void setExtraMotor(int speed) {
-  if (speed >= 0) {
-    ledcWrite(RPWM3, speed);
-    ledcWrite(LPWM3, 0);
-  } else {
-    ledcWrite(RPWM3, 0);
-    ledcWrite(LPWM3, -speed);
-  }
-}
-
 void setDriveMotors(int m1Speed, int m2Speed) {
   if (m1Speed >= 0) {
     ledcWrite(RPWM1, m1Speed);
@@ -187,6 +177,16 @@ void setDriveMotors(int m1Speed, int m2Speed) {
   }
 }
 
+void setExtraMotor(int speed) {
+  if (speed >= 0) {
+    ledcWrite(RPWM3, speed);
+    ledcWrite(LPWM3, 0);
+  } else {
+    ledcWrite(RPWM3, 0);
+    ledcWrite(LPWM3, -speed);
+  }
+}
+
 /* ================= EXTRA MOTOR ================= */
 void newMotorLeft() {
   setExtraMotor(-speedValue);
@@ -202,19 +202,12 @@ void stopNewMotor() {
 
 /* ================= CAR MOVEMENT ================= */
 void moveForward()       { setDriveMotors(speedValue, speedValue); }
-
 void moveBackward()      { setDriveMotors(-speedValue, -speedValue); }
-
 void turnLeft()          { setDriveMotors(speedValue, -speedValue); }
-
 void turnRight()         { setDriveMotors(-speedValue, speedValue); }
-
 void moveLeftForward()   { setDriveMotors(speedValue, speedValue / diff); }
-
 void moveRightForward()  { setDriveMotors(speedValue / diff, speedValue); }
-
 void moveLeftBackward()  { setDriveMotors(-speedValue, -speedValue / diff); }
-
 void moveRightBackward() { setDriveMotors(-speedValue / diff, -speedValue); }
 
 void stopAll() {
