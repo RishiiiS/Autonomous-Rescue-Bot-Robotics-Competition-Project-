@@ -31,10 +31,9 @@ int servoAngle = 90;
 bool servoUpRun = false;
 bool servoDownRun = false;
 
-bool newMotorLeftRun  = false;
-bool newMotorRightRun = false;
 char currentDriveCmd = 'S';
 int extraMotorDrive = 0;
+void setExtraMotor(int speed);
 
 unsigned long lastServoMove = 0;
 const int servoInterval = 20;
@@ -83,14 +82,6 @@ void loop() {
     }
   }
 
-  /* ===== CONTINUOUS NEW DC MOTOR ===== */
-  if (newMotorLeftRun) {
-    newMotorLeft();
-  }
-  if (newMotorRightRun) {
-    newMotorRight();
-  }
-
   /* ===== CONTINUOUS SERVO ===== */
   if (servoUpRun || servoDownRun) {
     unsigned long now = millis();
@@ -112,19 +103,18 @@ void controlCar(char c) {
 
     /* ---- NEW DC MOTOR ---- */
     case 'W':   // LEFT
-      newMotorLeftRun  = true;
-      newMotorRightRun = false;
+      extraMotorDrive = -1;
+      newMotorLeft();
       break;
 
     case 'U':   // RIGHT
-      newMotorRightRun = true;
-      newMotorLeftRun  = false;
+      extraMotorDrive = 1;
+      newMotorRight();
       break;
 
     case 'w':
     case 'u':   // STOP
-      newMotorLeftRun  = false;
-      newMotorRightRun = false;
+      extraMotorDrive = 0;
       stopNewMotor();
       break;
 
