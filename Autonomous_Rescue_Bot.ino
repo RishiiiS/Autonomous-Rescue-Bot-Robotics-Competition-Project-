@@ -74,6 +74,10 @@ void loop() {
 
     if (cmd >= '0' && cmd <= '9') {
       speedValue = map(cmd - '0', 0, 9, 60, 255);
+      controlCar(currentDriveCmd); // Instantly update active movements
+      if (extraMotorDrive != 0) {
+        setExtraMotor(extraMotorDrive * speedValue); // Instantly update extra motor
+      }
     } else {
       controlCar(cmd);
     }
